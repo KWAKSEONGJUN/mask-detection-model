@@ -5,11 +5,13 @@ import cv2
 
 IMG_SIZE = 200
 
-my_model = keras.models.load_model('my_model', compile=False)
+# my_model = keras.models.load_model('my_model', compile=False)
+my_model = keras.models.load_model('my_model.h5')
 face_model = cv2.dnn.readNet('caffe_model/deploy.prototxt.txt',
                              'caffe_model/res10_300x300_ssd_iter_140000.caffemodel')
 
-cap = cv2.VideoCapture(0)
+# cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture('video/04.mp4')
 while cap.isOpened():
     ret, frame = cap.read()
     if not ret:
@@ -34,11 +36,11 @@ while cap.isOpened():
         face = frame[y1:y2, x1:x2]
         face = cv2.resize(face, dsize=(IMG_SIZE, IMG_SIZE))
         face = cv2.cvtColor(face, cv2.COLOR_BGR2RGB)
-        face = preprocess_input(face)
+        # face = preprocess_input(face)
         face = np.expand_dims(face, axis=0)
-
+        face = np.array(face)
         mask, no_mask = my_model.predict(face).squeeze()
-        print(mask, no_mask)
+
         if mask > no_mask:
             color = (0, 255, 0)
             label = 'Mask (%d%%)' % (mask * 100)
